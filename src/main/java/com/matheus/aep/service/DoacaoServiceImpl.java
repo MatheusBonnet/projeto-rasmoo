@@ -16,8 +16,20 @@ import com.matheus.aep.repository.IDoacaoRepository;
 @Service
 public class DoacaoServiceImpl implements IDoacaoService {
 
+	public static final String MESSAGE_ERROR = "Erro interno no servidor, consulte o suporte!!!";
+	
+	public static final String MESSAGE_ERROR_DOACAO_NOT_FOUND = "Doacao nao encontrada, tente novamente.";
+	
 	@Autowired
 	private IDoacaoRepository doacaoRepository;
+	
+	private ModelMapper mapper;
+	
+	@Autowired
+	public DoacaoServiceImpl(IDoacaoRepository doacaoRepository) {
+		this.mapper = new ModelMapper();
+		this.doacaoRepository = doacaoRepository;
+	}
 
 	@Override
 	public Boolean atualizar(DoacaoDTO doacaoDTO){
@@ -27,18 +39,17 @@ public class DoacaoServiceImpl implements IDoacaoService {
 			
 			if(daocaoOptional.isPresent()) {
 				
-			ModelMapper mapper = new ModelMapper();
-			DoacaoEntity doacaoDto = mapper.map(daocaoOptional.get(), DoacaoEntity.class);
+			DoacaoEntity doacaoDto = this.mapper.map(daocaoOptional.get(), DoacaoEntity.class);
 
 			doacaoRepository.save(doacaoDto);
 
-			throw new DocaoException("Id passado nao existe, tente novamente", HttpStatus.NOT_FOUND);
+			throw new DocaoException(MESSAGE_ERROR_DOACAO_NOT_FOUND, HttpStatus.NOT_FOUND);
 			}
-			return false;
+			throw new DocaoException(MESSAGE_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (DocaoException d) {
 			throw d;
 		}catch (Exception e) {
-			throw new DocaoException("Erro interno no servidor, consulte o suporte!!!", HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new DocaoException(MESSAGE_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -47,10 +58,10 @@ public class DoacaoServiceImpl implements IDoacaoService {
 		try {
 			buscaPorId(id);
 			this.doacaoRepository.deleteById(id);
-			return true;
+			return Boolean.TRUE;
 			
 		}catch (Exception e) {
-			return false;
+			throw new DocaoException(MESSAGE_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -66,23 +77,22 @@ public class DoacaoServiceImpl implements IDoacaoService {
 			if(doacao.isPresent()) {
 				return doacao.get();
 			}			
-			throw new DocaoException("Doacao nao encontrada, entre com uma existente!!!", HttpStatus.NOT_FOUND);
+			throw new DocaoException(MESSAGE_ERROR_DOACAO_NOT_FOUND, HttpStatus.NOT_FOUND);
 		}catch (DocaoException d) {
 			throw d;
 		}catch (Exception e) {
-			throw new DocaoException("Erro interno no servidor, consulte o suporte!!!", HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new DocaoException(MESSAGE_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
 	@Override
 	public Boolean inserirDoacao(DoacaoDTO doacaoDTO) {
 		try {
-			ModelMapper mapper = new ModelMapper();
-			DoacaoEntity doacaoDto = mapper.map(doacaoDTO, DoacaoEntity.class);
+			DoacaoEntity doacaoDto = this.mapper.map(doacaoDTO, DoacaoEntity.class);
 			doacaoRepository.save(doacaoDto);
-			return true;
+			return Boolean.TRUE;
 		}catch (Exception e) {
-			return false;
+			throw new DocaoException(MESSAGE_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 	

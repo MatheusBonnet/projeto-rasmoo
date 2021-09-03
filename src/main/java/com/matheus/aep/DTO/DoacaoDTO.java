@@ -1,36 +1,17 @@
 package com.matheus.aep.DTO;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-
 public class DoacaoDTO {
 	
 	private Long id;
 	
-	@NotBlank(message = "Informe a descricao da doacao!")
-	@Min(value = 50, message = "Permitido no minimo 50 caracteres")
-	@Max(value = 200, message = "Permitido no maximo 200 caracteres")
 	private String descricao;
 
-	@NotBlank(message = "Informe o telefone para contato!!")
-	@Min(value = 11, message = "Permitido no minimo 20 numeros")
-	@Max(value = 11, message = "Permitido no maximo 20 numeros")
 	private Long telefone;
-	
-	@NotBlank(message = "Informe qual sera o tipo do produto!!")
-	@Min(value = 5, message = "Permitido no minimo 5 caracteres")
-	@Max(value = 50, message = "Permitido no maximo 50 caracteres")
+
 	private String produto;
-	
-	@NotBlank(message = "Informe seu endereco!!")
-	@Min(value = 5, message = "Permitido no minimo 5 caracteres")
-	@Max(value = 100, message = "Permitido no maximo 100 caracteres")
+
 	private String endereco;
 	
-	@NotBlank(message = "Informe o bairro em que voce mora!!")
-	@Min(value = 5, message = "Permitido no minimo 5 caracteres")
-	@Max(value = 100, message = "Permitido no maximo 100 caracteres")
 	private String bairro;
 	
 	public DoacaoDTO() {
