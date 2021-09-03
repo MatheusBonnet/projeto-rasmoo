@@ -5,6 +5,10 @@ import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +17,7 @@ import com.matheus.aep.entity.DoacaoEntity;
 import com.matheus.aep.exception.DocaoException;
 import com.matheus.aep.repository.IDoacaoRepository;
 
+@CacheConfig(cacheNames = "OdoacaoDTO")
 @Service
 public class DoacaoServiceImpl implements IDoacaoService {
 
@@ -31,6 +36,7 @@ public class DoacaoServiceImpl implements IDoacaoService {
 		this.doacaoRepository = doacaoRepository;
 	}
 
+	@CacheEvict( key = "#doacaoDTO.id")
 	@Override
 	public Boolean atualizar(DoacaoDTO doacaoDTO){
 		try {
@@ -65,11 +71,13 @@ public class DoacaoServiceImpl implements IDoacaoService {
 		}
 	}
 
+	@CachePut(unless = "#result.size()<3")
 	@Override
 	public List<DoacaoEntity> listarTodas() {
 		return doacaoRepository.findAll();
 	}
 
+	@Cacheable( key= "#id")
 	@Override
 	public DoacaoEntity buscaPorId(Long id) {
 		try {
